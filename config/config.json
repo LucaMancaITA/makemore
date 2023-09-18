@@ -1,8 +1,9 @@
 {
     "seed": 42,
+    "work_dir": "out/bigram",
     "vocab_size": 27,
     "learning_rate": 0.01,
     "weight_decay": 0.01,
     "batch_size": 32,
-    "max_epochs": 1000
+    "max_epochs": 5000
 }

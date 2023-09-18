@@ -1,17 +1,20 @@
 
 # Imports
+import os
 import json
 import time
 import torch
 from torch.utils.data import DataLoader
-from utils import build_datasets
+from utils import build_datasets, evaluate
 from nets.bigram import Bigram
+from torch.utils.tensorboard import SummaryWriter
 
 
 # Hyperparameters
 with open("config/config.json", "r", encoding="utf-8") as config:
     config = json.load(config)
 seed = config["seed"]
+work_dir = config["work_dir"]
 vocab_size = config["vocab_size"]
 batch_size = config["batch_size"]
 max_epochs = config["max_epochs"]
@@ -25,6 +28,8 @@ torch.cuda.manual_seed_all(seed)
 # Generate train, validation and test set
 filename = "data/names.txt"
 train_dataset, val_dataset, test_dataset = build_datasets(filename)
+os.makedirs(work_dir, exist_ok=True)
+writer = SummaryWriter(log_dir=work_dir)
 
 # Train dataloader
 train_dataloader = DataLoader(
@@ -43,6 +48,7 @@ optimizer = torch.optim.AdamW(
 )
 
 # Training loop
+best_loss = None
 print("\nTraining loop ...")
 for step in range(max_epochs):
 
@@ -68,7 +74,25 @@ for step in range(max_epochs):
         print(f"Step {step} | loss {loss.item():.4f}" \
               f"| step time {(t1-t0)*1000:.2f}ms")
 
-    # Model evaluation --> TODO
-
-    if step >= 500:
-      break
+    # Model evaluation
+    if step > 0 and step % 50 == 0:
+        train_loss = evaluate(
+            model=model,
+            dataset=train_dataset,
+            batch_size=100,
+            max_batches=10)
+        test_loss  = evaluate(
+            model=model,
+            dataset=test_dataset,
+            batch_size=100,
+            max_batches=10)
+        writer.add_scalar("Loss/train", train_loss, step)
+        writer.add_scalar("Loss/test", test_loss, step)
+        writer.flush()
+        print(f"step {step} train loss: {train_loss} test loss: {test_loss}")
+        # Save the model to disk if it has improved
+        if best_loss is None or test_loss < best_loss:
+            out_path = os.path.join(work_dir, "model.pt")
+            print(f"test loss {test_loss} is the best so far, saving model to {out_path}")
+            torch.save(model.state_dict(), out_path)
+            best_loss = test_loss

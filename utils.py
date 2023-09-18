@@ -1,6 +1,7 @@
 
 import torch
 from torch.utils.data import Dataset
+from torch.utils.data.dataloader import DataLoader
 
 
 class CharDataset(Dataset):
@@ -84,3 +85,34 @@ def build_datasets(input_file):
     test_dataset = CharDataset(test_words, chars, max_word_length)
 
     return train_dataset, val_dataset, test_dataset
+
+
+@torch.inference_mode()
+def evaluate(model, dataset, batch_size=50, max_batches=None):
+    """Model evaluation.
+
+    Args:
+        model (Object): PyTorch model.
+        dataset (Object): PyTorch dataloader.
+        batch_size (int, optional): dataset batch size. Defaults to 50.
+        max_batches (int, optional): max batches to evaluate. Defaults to None.
+
+    Returns:
+        float: evaluation loss.
+    """
+    model.eval()
+    loader = DataLoader(
+        dataset,
+        shuffle=True,
+        batch_size=batch_size,
+        num_workers=0)
+    losses = []
+    for i, batch in enumerate(loader):
+        X, Y = batch
+        logits, loss = model(X, Y)
+        losses.append(loss.item())
+        if max_batches is not None and i >= max_batches:
+            break
+    mean_loss = torch.tensor(losses).mean().item()
+    model.train() # reset model back to training mode
+    return mean_loss
