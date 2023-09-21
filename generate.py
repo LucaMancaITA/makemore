@@ -59,8 +59,9 @@ def print_samples(model, top_k, filename, num=10, device="cpu"):
     train_samples, test_samples, new_samples = [], [], []
     for i in range(X_samp.size(0)):
         # Get the i'th row of sampled integers, as python list
-        row = X_samp[i, 1:].tolist() # note: we need to crop out the first <START> token
-        # Token 0 is the <STOP> token, so we crop the output sequence at that point
+        row = X_samp[i, 1:].tolist() # crop out the first <START> token
+        # Token 0 is the <STOP> token, so we crop the output sequence at that
+        # point
         crop_index = row.index(0) if 0 in row else len(row)
         row = row[:crop_index]
         word_samp = train_dataset.decode(row)
@@ -72,7 +73,11 @@ def print_samples(model, top_k, filename, num=10, device="cpu"):
         else:
             new_samples.append(word_samp)
     print('-'*80)
-    for lst, desc in [(train_samples, 'in train'), (test_samples, 'in test'), (new_samples, 'new')]:
+    for lst, desc in [
+            (train_samples, 'in train'),
+            (test_samples, 'in test'),
+            (new_samples, 'new')
+        ]:
         print(f"{len(lst)} samples that are {desc}:")
         for word in lst:
             print(word)
