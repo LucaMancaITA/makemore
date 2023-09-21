@@ -1,2 +1,5 @@
 # venv
 env/*
+
+# writer and models
+out/*
