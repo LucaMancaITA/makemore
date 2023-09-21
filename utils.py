@@ -75,8 +75,8 @@ def build_datasets(input_file):
     val_words = [words[i] for i in rp[train_set_size:test_set_size]]
     test_words = [words[i] for i in rp[test_set_size:]]
     print("Split up the dataset into:\n" \
-        f"{len(train_words)} training examples" \
-        f"{len(val_words)} validation examples" \
+        f"{len(train_words)} training examples\n" \
+        f"{len(val_words)} validation examples\n" \
         f"{len(test_words)} test examples")
 
     # Wrap in dataset objects

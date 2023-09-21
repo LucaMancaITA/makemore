@@ -1,0 +1,8 @@
+{
+    "seed": 42,
+    "vocab_size": 27,
+    "input_file": "data/names.txt",
+    "architecture": "bigram",
+    "model_path": "out/bigram-long",
+    "top_k": -1
+}
