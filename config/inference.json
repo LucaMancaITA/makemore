@@ -2,7 +2,12 @@
     "seed": 42,
     "vocab_size": 27,
     "input_file": "data/names.txt",
-    "architecture": "bigram",
-    "model_path": "out/bigram-long",
-    "top_k": -1
+    "architecture": "mlp",
+    "model_path": "out/mlp",
+    "top_k": -1,
+    "mlp": {
+        "block_size": 3,
+        "n_embd1": 10,
+        "n_embd2": 10
+    }
 }
