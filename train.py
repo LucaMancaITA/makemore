@@ -8,6 +8,7 @@ import torch
 from torch.utils.data import DataLoader
 from utils import build_datasets, evaluate
 from nets.bigram import Bigram
+from nets.mlp import MLP
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -17,7 +18,6 @@ with open("config/training.json", "r", encoding="utf-8") as config:
 seed = config["seed"]
 work_dir = config["work_dir"]
 input_file = config["input_file"]
-vocab_size = config["vocab_size"]
 architecture = config["architecture"]
 resume = config["resume"]
 batch_size = config["batch_size"]
@@ -32,6 +32,9 @@ torch.cuda.manual_seed_all(seed)
 
 # Generate train, validation and test set
 train_dataset, val_dataset, test_dataset = build_datasets(input_file)
+vocab_size = train_dataset.get_vocab_size()
+block_size = train_dataset.get_output_length()
+
 os.makedirs(work_dir, exist_ok=True)
 writer = SummaryWriter(log_dir=work_dir)
 
@@ -42,6 +45,9 @@ train_dataloader = DataLoader(
 # Create the model
 if architecture == "bigram":
     model = Bigram(vocab_size=vocab_size)
+elif architecture == "mlp":
+    model = MLP(config["mlp"]["block_size"], vocab_size,
+                config["mlp"]["n_embd1"], config["mlp"]["n_embd2"])
 else:
     print("Please insert a supported model architecture.\n" \
           "Supported models are: bigram.")

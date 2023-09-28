@@ -7,6 +7,7 @@ import torch
 from torch.nn import functional as F
 from utils import build_datasets
 from nets.bigram import Bigram
+from nets.mlp import MLP
 
 
 @torch.no_grad()
@@ -102,6 +103,12 @@ if __name__ == "__main__":
     # Create the model architecture
     if architecture == "bigram":
         model = Bigram(vocab_size=vocab_size)
+    elif architecture == "mlp":
+        model = MLP(
+            block_size=config["mlp"]["block_size"],
+            vocab_size=vocab_size,
+            n_embd1=config["mlp"]["n_embd1"],
+            n_embd2=config["mlp"]["n_embd2"])
 
     # Load the weights
     try:
