@@ -6,7 +6,10 @@ from torch.nn import functional as F
 
 
 class MLP(nn.Module):
+    """Multi-layer perceptron.
 
+    Embedding layer -> FC -> tanh -> FC.
+    """
     def __init__(self, block_size, vocab_size, n_embd1, n_embd2):
         super().__init__()
         self.block_size = block_size
@@ -24,11 +27,11 @@ class MLP(nn.Module):
         return self.block_size
 
     def forward(self, idx, targets=None):
-
         # Gather the word embeddings
         embs = []
+        # Loop through the number of past characters to use to make the preds
         for k in range(self.block_size):
-            tok_emb = self.wte(idx) # token embeddings of shape (b, t, n_embd)
+            tok_emb = self.wte(idx) # token embeddings of shape (b, t, n_embd1)
             idx = torch.roll(idx, 1, 1)
             idx[:, 0] = self.vocab_size # special <BLANK> token
             embs.append(tok_emb)
