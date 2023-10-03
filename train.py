@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader
 from utils import build_datasets, evaluate
 from nets.bigram import Bigram
 from nets.mlp import MLP
+from nets.rnn import RNN
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -46,11 +47,22 @@ train_dataloader = DataLoader(
 if architecture == "bigram":
     model = Bigram(vocab_size=vocab_size)
 elif architecture == "mlp":
-    model = MLP(config["mlp"]["block_size"], vocab_size,
-                config["mlp"]["n_embd1"], config["mlp"]["n_embd2"])
+    model = MLP(
+        block_size=config["mlp"]["block_size"],
+        vocab_size=vocab_size,
+        n_embd1=config["mlp"]["n_embd1"],
+        n_embd2=config["mlp"]["n_embd2"])
+elif architecture == "rnn":
+    model = RNN(
+        block_size=config["rnn"]["block_size"],
+        vocab_size=vocab_size,
+        n_embd1=config["rnn"]["n_embd1"],
+        n_embd2=config["rnn"]["n_embd2"],
+        cell_type=config["rnn"]["cell_type"]
+    )
 else:
     print("Please insert a supported model architecture.\n" \
-          "Supported models are: bigram.")
+          "Supported models are: bigram, mlp, rnn.")
     sys.exit()
 
 # Fine-tuning
