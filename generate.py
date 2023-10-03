@@ -8,6 +8,7 @@ from torch.nn import functional as F
 from utils import build_datasets
 from nets.bigram import Bigram
 from nets.mlp import MLP
+from nets.rnn import RNN
 
 
 @torch.no_grad()
@@ -109,6 +110,14 @@ if __name__ == "__main__":
             vocab_size=vocab_size,
             n_embd1=config["mlp"]["n_embd1"],
             n_embd2=config["mlp"]["n_embd2"])
+    elif architecture == "rnn":
+        model = RNN(
+            block_size=config["rnn"]["block_size"],
+            vocab_size=vocab_size,
+            n_embd1=config["rnn"]["n_embd1"],
+            n_embd2=config["rnn"]["n_embd2"],
+            cell_type=config["rnn"]["cell_type"]
+        )
 
     # Load the weights
     try:
