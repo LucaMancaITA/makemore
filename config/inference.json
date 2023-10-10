@@ -10,6 +10,11 @@
         "n_embd1": 10,
         "n_embd2": 10
     },
+    "rnn": {
+        "block_size": 3,
+        "n_embd1": 10,
+        "n_embd2": 10,
+        "cell_type": "gru"
     "transformer": {
         "block_size": 16,
         "n_embd": 64,
