@@ -49,8 +49,8 @@ class CausalSelfAttention(nn.Module):
         # Causal self-attention
         # Self-attend: (B, nh, T, hs) x (B, nh, T, hs) -> (B, nh, T, T)
         attn = (q @ k.transpose(-2, -1) * (1.0 / math.sqrt(k.size(-1))))
-        att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-inf'))
-        att = F.softmax(att, dim=-1)
+        attn = attn.masked_fill(self.bias[:,:,:T,:T] == 0, float('-inf'))
+        attn = F.softmax(attn, dim=-1)
         y = attn @ v    # (B, nh, T, T) x (B, nh, T, hs) -> (B, nh, T, hs)
         # Re-assemble all head outputs
         y = y.transpose(1, 2).contiguous().view(B, T, C)
@@ -77,10 +77,16 @@ class Block(nn.Module):
         self.mlpf = lambda x: m.c_proj(m.act(m.c_fc(x)))
 
     def forward(self, x):
-        #x = x + self.attn(self.ln1(x))
-        #x = x + self.mlpf(self.ln2(x))
-        x = self.ln1(x + self.attn(x))
-        x = self.ln2(x + self.mlpf(x))
+        # Paper about Pre-LN and Post-LN
+        # (On Layer Normalization in the Transformer Architecture)
+        # Pre-LN Transformer
+        x = x + self.attn(self.ln1(x))
+        x = x + self.mlpf(self.ln2(x))
+        # Post-LN Transformer
+        # attention = self.attn(x)
+        # x = self.ln1(x + attention)
+        # forward = self.mlpf(x)
+        # x = self.ln2(x + forward)
 
         return x
 
