@@ -78,7 +78,6 @@ elif architecture == "transformer":
 else:
     print("Please insert a supported model architecture.\n" \
           "Supported models are: bigram, mlp, rnn, transformer.")
-    )
     sys.exit()
 
 # Fine-tuning
