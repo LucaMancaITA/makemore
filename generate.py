@@ -8,6 +8,7 @@ from torch.nn import functional as F
 from utils import build_datasets
 from nets.bigram import Bigram
 from nets.mlp import MLP
+from nets.transformer import Transformer
 
 
 @torch.no_grad()
@@ -109,6 +110,14 @@ if __name__ == "__main__":
             vocab_size=vocab_size,
             n_embd1=config["mlp"]["n_embd1"],
             n_embd2=config["mlp"]["n_embd2"])
+    elif architecture == "transformer":
+        model = Transformer(
+        vocab_size=vocab_size,
+        n_embd=config["transformer"]["n_embd"],
+        n_head=config["transformer"]["n_head"],
+        block_size=config["transformer"]["block_size"],
+        n_layer=config["transformer"]["n_layer"]
+    )
 
     # Load the weights
     try:

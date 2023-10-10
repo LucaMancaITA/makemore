@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader
 from utils import build_datasets, evaluate
 from nets.bigram import Bigram
 from nets.mlp import MLP
+from nets.transformer import Transformer
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -42,15 +43,32 @@ writer = SummaryWriter(log_dir=work_dir)
 train_dataloader = DataLoader(
     train_dataset, batch_size=batch_size, shuffle=True)
 
+block_size = train_dataset.get_output_length()
+print(block_size)
+
 # Create the model
 if architecture == "bigram":
-    model = Bigram(vocab_size=vocab_size)
+    model = Bigram(
+        vocab_size=vocab_size
+    )
 elif architecture == "mlp":
-    model = MLP(config["mlp"]["block_size"], vocab_size,
-                config["mlp"]["n_embd1"], config["mlp"]["n_embd2"])
+    model = MLP(
+        block_size=config["mlp"]["block_size"],
+        vocab_size=vocab_size,
+        n_embd1=config["mlp"]["n_embd1"],
+        n_embd2=config["mlp"]["n_embd2"]
+    )
+elif architecture == "transformer":
+    model = Transformer(
+        vocab_size=vocab_size,
+        n_embd=config["transformer"]["n_embd"],
+        n_head=config["transformer"]["n_head"],
+        block_size=config["transformer"]["block_size"],
+        n_layer=config["transformer"]["n_layer"]
+    )
 else:
     print("Please insert a supported model architecture.\n" \
-          "Supported models are: bigram.")
+          "Supported models are: bigram, mlp, transformer.")
     sys.exit()
 
 # Fine-tuning

@@ -2,12 +2,18 @@
     "seed": 42,
     "vocab_size": 27,
     "input_file": "data/names.txt",
-    "architecture": "mlp",
-    "model_path": "out/mlp",
+    "architecture": "transformer",
+    "model_path": "out/transformer",
     "top_k": -1,
     "mlp": {
         "block_size": 3,
         "n_embd1": 10,
         "n_embd2": 10
+    },
+    "transformer": {
+        "block_size": 16,
+        "n_embd": 64,
+        "n_head": 4,
+        "n_layer": 4
     }
 }
