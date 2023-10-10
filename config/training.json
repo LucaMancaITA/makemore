@@ -1,8 +1,8 @@
 {
     "seed": 42,
     "input_file": "data/names.txt",
-    "architecture": "rnn",
-    "work_dir": "out/rnn-gru",
+    "architecture": "transformer",
+    "work_dir": "out/transformer-2",
     "resume": false,
     "learning_rate": 0.01,
     "weight_decay": 0.001,
@@ -19,5 +19,10 @@
         "n_embd1": 10,
         "n_embd2": 10,
         "cell_type": "gru"
+    "transformer": {
+        "block_size": 16,
+        "n_embd": 64,
+        "n_head": 4,
+        "n_layer": 4
     }
 }
