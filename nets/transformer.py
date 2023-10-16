@@ -139,8 +139,10 @@ class Transformer(nn.Module):
         for block in self.transformer.h:
             x = block(x)
 
+        x = self.transformer.ln_f(x)
+
         # Multi-layer perceptron
-        logits = self.transformer.ln_f(x)
+        logits = self.lm_head(x)
 
         # Loss
         loss = None
